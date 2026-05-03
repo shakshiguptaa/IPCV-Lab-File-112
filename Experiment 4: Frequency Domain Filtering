@@ -1,0 +1,6 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('path', 0)
+f = np.fft.fft2(img)
+fshift = np.fft.fftshift(f)
