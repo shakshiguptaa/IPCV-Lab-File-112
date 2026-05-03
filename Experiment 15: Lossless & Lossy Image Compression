@@ -1,0 +1,77 @@
+import cv2
+import numpy as np
+from collections import Counter
+import heapq
+
+# -------------------------------
+# HUFFMAN CODING (LOSSLESS)
+# -------------------------------
+
+class Node:
+    def __init__(self, value, freq):
+        self.value = value
+        self.freq = freq
+        self.left = None
+        self.right = None
+
+    def __lt__(self, other):
+        return self.freq < other.freq
+
+def build_huffman_tree(freq_dict):
+    heap = [Node(val, freq) for val, freq in freq_dict.items()]
+    heapq.heapify(heap)
+
+    while len(heap) > 1:
+        n1 = heapq.heappop(heap)
+        n2 = heapq.heappop(heap)
+
+        merged = Node(None, n1.freq + n2.freq)
+        merged.left = n1
+        merged.right = n2
+
+        heapq.heappush(heap, merged)
+
+    return heap[0]
+
+def generate_codes(node, prefix="", codebook={}):
+    if node is None:
+        return
+
+    if node.value is not None:
+        codebook[node.value] = prefix
+        return
+
+    generate_codes(node.left, prefix + "0", codebook)
+    generate_codes(node.right, prefix + "1", codebook)
+    return codebook
+
+# Read image
+img = cv2.imread('image.jpg', 0)
+flat = img.flatten()
+
+# Frequency count
+freq = Counter(flat)
+
+# Build Huffman Tree
+root = build_huffman_tree(freq)
+
+# Generate codes
+huffman_codes = generate_codes(root)
+
+# Encode image
+encoded = ''.join([huffman_codes[pixel] for pixel in flat])
+
+print("Original size (bits):", len(flat) * 8)
+print("Compressed size (bits):", len(encoded))
+
+# -------------------------------
+# LOSSY COMPRESSION (JPEG)
+# -------------------------------
+
+# Save with lower quality (lossy)
+cv2.imwrite("compressed_low.jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 30])
+
+# Save high quality
+cv2.imwrite("compressed_high.jpg", img, [cv2.IMWRITE_JPEG_QUALITY, 90])
+
+print("Lossy compression images saved.")
