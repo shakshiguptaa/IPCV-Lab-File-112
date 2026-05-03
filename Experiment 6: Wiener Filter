@@ -1,0 +1,9 @@
+from scipy.signal import wiener
+import cv2
+import numpy as np
+
+img = cv2.imread('path', 0)
+noise = 20 * np.sin(np.linspace(0,50,img.shape[1]))
+noisy = img + noise
+
+wiener_img = wiener(noisy)
