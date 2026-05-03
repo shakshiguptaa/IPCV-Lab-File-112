@@ -1,0 +1,36 @@
+from collections import Counter
+
+def shannon_fano(symbols, prefix="", code={}):
+    if len(symbols) == 1:
+        code[symbols[0][0]] = prefix
+        return
+
+    total = sum([freq for _, freq in symbols])
+    acc = 0
+
+    for i in range(len(symbols)):
+        acc += symbols[i][1]
+        if acc >= total / 2:
+            break
+
+    left = symbols[:i+1]
+    right = symbols[i+1:]
+
+    shannon_fano(left, prefix + "0", code)
+    shannon_fano(right, prefix + "1", code)
+
+    return code
+
+# Example image
+import cv2
+img = cv2.imread('image.jpg', 0)
+flat = img.flatten()
+
+freq = Counter(flat)
+symbols = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+
+codes = shannon_fano(symbols)
+
+encoded = ''.join([codes[p] for p in flat])
+
+print("Shannon-Fano Compressed size:", len(encoded))
