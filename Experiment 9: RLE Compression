@@ -1,0 +1,9 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('path', 0)
+flat = img.flatten()
+
+rle = []
+prev = flat[0]
+count = 1
