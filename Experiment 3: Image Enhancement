@@ -1,0 +1,9 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('path', 0)
+
+min_val, max_val = np.min(img), np.max(img)
+cs_img = ((img - min_val) / (max_val - min_val) * 255).astype(np.uint8)
+
+he_img = cv2.equalizeHist(img)
