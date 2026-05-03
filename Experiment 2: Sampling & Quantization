@@ -1,0 +1,13 @@
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+
+image = cv2.imread(r'path_to_image.jpg', cv2.IMREAD_GRAYSCALE)
+
+def sampling(img, factor):
+    return img[::factor, ::factor]
+
+def quantization(img, levels):
+    img_norm = img / 255.0
+    img_quant = np.floor(img_norm * levels) / levels
+    return (img_quant * 255).astype(np.uint8)
