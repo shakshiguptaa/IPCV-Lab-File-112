@@ -1,0 +1,9 @@
+import cv2
+import numpy as np
+
+img = cv2.imread('path', 0)
+
+gauss = img + np.random.normal(0, 20, img.shape)
+gauss = np.clip(gauss, 0, 255).astype(np.uint8)
+
+mean_filt = cv2.blur(gauss, (3,3))
